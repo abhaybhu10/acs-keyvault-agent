@@ -81,7 +81,6 @@ class KeyVaultAgent(object):
         self.client_secret = os.environ["CLIENT_SECRET"]
         _logger.info('Parsing Service Principle env completed')
 
-
     def _get_client(self):
         if os.getenv("USE_MSI", "false").lower() == "true":
             _logger.info('Using MSI')
