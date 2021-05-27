@@ -75,6 +75,13 @@ class KeyVaultAgent(object):
 
         _logger.info('Parsing Service Principle file completed')
 
+    def _parse_sp_env(self):
+        self.tenant_id = os.environ["TENANT_ID"]
+        self.client_id = os.environ["CLIENT_ID"]
+        self.client_secret = os.environ["CLIENT_SECRET"]
+        _logger.info('Parsing Service Principle env completed')
+
+
     def _get_client(self):
         if os.getenv("USE_MSI", "false").lower() == "true":
             _logger.info('Using MSI')
@@ -93,7 +100,10 @@ class KeyVaultAgent(object):
             else:
                 credentials = MSIAuthentication(resource=VAULT_RESOURCE_NAME)
         else:
-            self._parse_sp_file()
+            if os.getenv("USE_ENV", "false").lower() == "true":
+                self._parse_sp_env()
+            else:
+                self._parse_sp_file()
             authority = '/'.join([AZURE_AUTHORITY_SERVER.rstrip('/'), self.tenant_id])
             _logger.info('Using authority: %s', authority)
             context = AuthenticationContext(authority)
